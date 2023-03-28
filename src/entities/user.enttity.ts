@@ -29,7 +29,13 @@ class User {
 	@Column({ length: 120 })
 	password: string;
 
-	@Column({ type: "enum", enum: ["admin", "client"], default: "client" })
+	@Column({
+		name: "role",
+		type: "enum",
+		enum: ["admin", "client"],
+		enumName: "roleEnum",
+		default: "client"
+	})
 	role: "admin" | "client";
 
 	@CreateDateColumn({ type: "timestamp" })
