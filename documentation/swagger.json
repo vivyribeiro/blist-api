@@ -23,7 +23,7 @@
 			"description": "Ambiente de Desenvolmento"
 		},
 		{
-			"url": "https://api-emproduction.com",
+			"url": "https://blist-api.onrender.com",
 			"description": "Ambiente de Produção"
 		}
 	],
