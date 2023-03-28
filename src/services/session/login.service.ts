@@ -18,7 +18,7 @@ const loginService = async ({ email, password }: iLogin): Promise<iToken> => {
 	}
 
 	if (user.deletedAt) {
-		throw new AppError("User is desactive.", 401);
+		await userRepository.recover(user);
 	}
 
 	const passwordMatch = await compare(password, user.password);

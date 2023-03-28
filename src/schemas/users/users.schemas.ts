@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { UserRole } from "../../interfaces/users/users.interfaces";
 
 const validIdSchema = z.object({
 	id: z.string().uuid("The id must be the type uuid.")
@@ -11,7 +10,7 @@ const userSchema = z.object({
 	email: z.string().email().min(7).max(70),
 	password: z.string().min(6).max(120),
 	telephone: z.string().length(11),
-	role: z.nativeEnum(UserRole).default(UserRole.CLIENT),
+	role: z.enum(["admin", "client"]).default("client"),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 	deletedAt: z.date().nullable()
@@ -31,8 +30,7 @@ const updateUserSchema = userSchema
 		fullName: true,
 		email: true,
 		password: true,
-		telephone: true,
-		deletedAt: true
+		telephone: true
 	})
 	.partial();
 

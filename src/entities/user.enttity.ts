@@ -11,7 +11,6 @@ import {
 	DeleteDateColumn
 } from "typeorm";
 import Contact from "./contact.enttity";
-import { UserRole } from "../interfaces/users/users.interfaces";
 
 @Entity("users")
 class User {
@@ -30,8 +29,8 @@ class User {
 	@Column({ length: 120 })
 	password: string;
 
-	@Column({ type: "enum", enum: UserRole, default: UserRole.CLIENT })
-	role: UserRole;
+	@Column({ type: "enum", enum: ["admin", "client"], default: "client" })
+	role: "admin" | "client";
 
 	@CreateDateColumn({ type: "timestamp" })
 	createdAt: Date;
