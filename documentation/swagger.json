@@ -1,0 +1,654 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Blist API",
+		"description": "Essa é uma api para gerenciar a lista comercial contatos de seus usuários, com níveis de permissões e autenticação.",
+		"contact": {
+			"name": "Suport",
+			"email": "vivy.saribeiro@gmail.com"
+		},
+		"x-logo": {
+			"url": "",
+			"altText": "Blist logo"
+		},
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT",
+			"url": "https://opensource.org/license/mit/"
+		}
+	},
+	"servers": [
+		{
+			"url": "http://localhost:3000",
+			"description": "Ambiente de Desenvolmento"
+		},
+		{
+			"url": "https://api-emproduction.com",
+			"description": "Ambiente de Produção"
+		}
+	],
+	"tags": [
+		{
+			"name": "users",
+			"description": "Operações de usuário"
+		},
+		{
+			"name": "session",
+			"description": "Autenticação do usuário e entrada no sistema"
+		},
+		{
+			"name": "contacts",
+			"description": "Operações sobre os contatos do usuário"
+		}
+	],
+	"paths": {
+		"/users": {
+			"post": {
+				"tags": ["users"],
+				"summary": "Criação de usuário",
+				"description": "Cria um novo usuário.",
+				"requestBody": {
+					"description": "Dados necessários para criar um novo usuário",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUser"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Cadastro do usuário feito com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseUser"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados imcompletos ou inválidos para cadastro"
+					},
+					"409": {
+						"description": "Já existe um usuário com o email/telefone informado"
+					}
+				}
+			},
+			"get": {
+				"tags": ["users"],
+				"summary": "Listagem dos usuários cadastrados",
+				"description": "Lista de usuários. Rota permitida somente por administradores.",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Usuário cadastrados",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ResponseUser"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"patch": {
+				"tags": ["users"],
+				"summary": "Atualização de usuário",
+				"description": "Atualiza um usuário.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id do usuário",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"description": "Dados permitidos para atualização do usuário",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUser"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Usuário atualizado com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseUser"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados imcompletos ou inválidos para cadastro"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					},
+					"404": {
+						"description": "Usuário não encontrado"
+					},
+					"409": {
+						"description": "Já existe um usuário com o email/telefone informado"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["users"],
+				"summary": "Deleção de usuário",
+				"description": "Desabilita o usuário com o id enviado na rota. O admin pode desabilitar qualquer usuário, já outro tipo de usuário só pode desabilitar ele mesmo.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id do usuário",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Usuário desabilitado"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					},
+					"404": {
+						"description": "Usuário não encontrado"
+					}
+				}
+			}
+		},
+		"/login": {
+			"post": {
+				"tags": ["session"],
+				"summary": "Entrada do usuário do sistema",
+				"description": "Autenticação do usuário por meio das suas credenciais",
+				"requestBody": {
+					"description": "Dados necessários para entrar no sistema",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginUser"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Credenciais do usuário válidas",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TokenUser"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados incompletos ou incorretos"
+					},
+					"401": {
+						"description": "Credenciais inválidas"
+					}
+				}
+			}
+		},
+		"/profile": {
+			"get": {
+				"tags": ["session"],
+				"summary": "Perfil do usuário",
+				"description": "Lista perfil do usuário autenticado. Rota pode ser utilizado como autologin.",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Usuário autenticado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseUser"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					}
+				}
+			}
+		},
+		"/contacts": {
+			"post": {
+				"tags": ["contacts"],
+				"summary": "Criação de contatos do usuário",
+				"description": "Cria novos contatos para um usuário. Usuário identificado pelo token.",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"description": "Dados necessários para criação de contatos",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/CreateContact"
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Cadastro do usuário feito com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ResponseContact"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados imcompletos ou inválidos para cadastro"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"409": {
+						"description": "Já existe contato(s) com o email(s)/telefone(s) informado(s)"
+					}
+				}
+			},
+			"get": {
+				"tags": ["contacts"],
+				"summary": "Listagem dos contatos cadastrados do usuário autenticado",
+				"description": "Lista de contatos de um usuário. Usuário identificado pelo token.",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Lista de contatos do usuário.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/ResponseContact"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					}
+				}
+			}
+		},
+		"/contacts/{id}": {
+			"patch": {
+				"tags": ["contacts"],
+				"summary": "Atualização de contato",
+				"description": "Atualiza um contato.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id do contato",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"description": "Dados permitidos para atualização do contato",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateContact"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Contato atualizado com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseContact"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados imcompletos ou inválidos para atualização"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					},
+					"404": {
+						"description": "Contato não encontrado"
+					},
+					"409": {
+						"description": "Já existe contato(s) com o email(s)/telefone(s) informado(s)"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["contacts"],
+				"summary": "Deleção de contato",
+				"description": "Deleta o contato do usuário com o id enviado na rota. O admin pode deletar um contato de qualquer usuário, já outro tipo de usuário só pode deletar seus próprios contatos.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id do contato",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Contato deletado"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					},
+					"404": {
+						"description": "Contato não encontrado"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"CreateUser": {
+				"type": "object",
+				"properties": {
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do usuário",
+						"example": "Viviane Ribeiro"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email de cadastro do usuário",
+						"example": "vivy.saribeiro@gmail.com"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password de cadastro do usuário",
+						"example": "pa55w0rd"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone de contato do usuário",
+						"example": "75988445566"
+					},
+					"role": {
+						"type": "string",
+						"enum": ["admin", "client"],
+						"description": "Papel do usuário no sistema. Usuário padrão é \"client\"",
+						"example": "admin"
+					}
+				},
+				"required": ["fullName", "email", "password", "telephone"]
+			},
+			"UpdateUser": {
+				"type": "object",
+				"properties": {
+					"fullName": {
+						"type": "string",
+						"description": "Nome a ser atualizado",
+						"example": "Viviane Ribeiro"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email  a ser atualizado",
+						"example": "vivy.saribeiro@gmail.com"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password  a ser atualizado",
+						"example": "pa55w0rd"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone a ser atualizado",
+						"example": "75988445566"
+					}
+				}
+			},
+			"ResponseUser": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Identificador único do usuário",
+						"example": "d4a10c9a-075e-492d-8c16-a2e5020aeb85"
+					},
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do usuário",
+						"example": "Viviane Ribeiro"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email de cadastro do usuário",
+						"example": "vivy.saribeiro@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone de contato do usuário",
+						"example": "75988445566"
+					},
+					"role": {
+						"enum": ["admin", "client"],
+						"description": "Papel do usuário no sistema",
+						"example": "admin"
+					},
+					"createdAt": {
+						"type": "string",
+						"description": "Data e horário do cadastro do usuário",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"description": "Data e horário de atualização feita no cadastro do usuário. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"deletedAt": {
+						"type": "string",
+						"description": "Data e horário em que a conta do usuário foi desativada, na sua criação recebe o valor null",
+						"example": null
+					}
+				}
+			},
+			"LoginUser": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"type": "string",
+						"description": "Email de cadastro do usuário",
+						"example": "vivy.saribeiro@gmail.com"
+					},
+					"password": {
+						"type": "string",
+						"description": "Password de cadastro do usuário",
+						"example": "pa55w0rd"
+					}
+				},
+				"required": ["email", "password"]
+			},
+			"TokenUser": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"type": "string",
+						"format": "JWT",
+						"description": "Token JWT",
+						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+					}
+				}
+			},
+			"CreateContact": {
+				"type": "object",
+				"properties": {
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do contato",
+						"example": "Miguel Sousa"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email do contato",
+						"example": "miguel.sousa@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone do contato",
+						"example": "75991144557"
+					}
+				},
+				"required": ["fullName", "email", "telephone"]
+			},
+			"ResponseContact": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Identificador único do contato",
+						"example": "8ae6aa11-8c0f-4908-9e6a-35e7571d59ed"
+					},
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do contato",
+						"example": "Miguel Sousa"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email do contato",
+						"example": "miguel.sousa@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone do contato",
+						"example": "75991144557"
+					},
+					"createdAt": {
+						"type": "string",
+						"description": "Data e horário do cadastro do contato",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"description": "Data e horário de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27T14:11:16.159Z"
+					}
+				}
+			},
+			"UpdateContact": {
+				"type": "object",
+				"properties": {
+					"fullName": {
+						"type": "string",
+						"description": "Nome a ser atualizado",
+						"example": "Miguel Sousa"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email  a ser atualizado",
+						"example": "miguel.sousa@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone a ser atualizado",
+						"example": "75991144557"
+					}
+				}
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"description": "Autenticação do usuário utilizando JWT",
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	}
+}
