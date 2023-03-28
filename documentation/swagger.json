@@ -8,7 +8,7 @@
 			"email": "vivy.saribeiro@gmail.com"
 		},
 		"x-logo": {
-			"url": "",
+			"url": "https://github.com/vivyribeiro/blist-api/blob/main/documentation/logo.png?raw=true",
 			"altText": "Blist logo"
 		},
 		"version": "1.0.0",
