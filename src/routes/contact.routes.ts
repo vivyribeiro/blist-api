@@ -3,20 +3,19 @@ import {
 	updateContactController,
 	deleteContactController,
 	listUserContactsController,
-	createUserContactsController
+	createUserContactController
 } from "../controllers/contacts";
 import {
 	ensureDataIsValidMiddleware,
 	ensureTokenIsValidMiddleware,
 	ensurePaginationFormatMiddleware,
-	ensureIsSameUserOrAdminMiddleware
+	ensureIsSameUserOrAdminMiddleware,
+	ensureEmailOrTelephoneExistsMiddleware,
+	ensureIsAdminMiddleware
 } from "../middlewares";
-import {
-	ensureContactExistsMiddleware,
-	ensureContastsEmailOrTelephoneExistsMiddleware
-} from "../middlewares/contacts";
 import { ensureUserExistsMiddleware } from "../middlewares/users";
-import { createContactsSchema, updateContactSchema } from "../schemas/contacts";
+import { ensureContactExistsMiddleware } from "../middlewares/contacts";
+import { createContactSchema, updateContactSchema } from "../schemas/contacts";
 
 const contactRoutes = Router();
 
@@ -24,16 +23,16 @@ contactRoutes.post(
 	"/",
 	ensureTokenIsValidMiddleware,
 	ensureUserExistsMiddleware,
-	ensureDataIsValidMiddleware(createContactsSchema),
-	ensureContastsEmailOrTelephoneExistsMiddleware,
-	createUserContactsController
+	ensureDataIsValidMiddleware(createContactSchema),
+	ensureEmailOrTelephoneExistsMiddleware,
+	createUserContactController
 );
 
 contactRoutes.get(
 	"/",
 	ensureTokenIsValidMiddleware,
 	ensureUserExistsMiddleware,
-	ensureIsSameUserOrAdminMiddleware,
+	ensureIsAdminMiddleware,
 	ensurePaginationFormatMiddleware,
 	listUserContactsController
 );
@@ -44,7 +43,7 @@ contactRoutes.patch(
 	ensureContactExistsMiddleware,
 	ensureIsSameUserOrAdminMiddleware,
 	ensureDataIsValidMiddleware(updateContactSchema),
-	ensureContastsEmailOrTelephoneExistsMiddleware,
+	ensureEmailOrTelephoneExistsMiddleware,
 	updateContactController
 );
 

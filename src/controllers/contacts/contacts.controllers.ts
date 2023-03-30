@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
 	iContactUpdate,
-	iContactsCreate,
+	iContactCreate,
 	iContactResponse
 } from "../../interfaces/contacts";
 import { iUser, paginationList } from "../../interfaces/users";
@@ -9,14 +9,14 @@ import {
 	updateContactService,
 	deleteContactService,
 	listUserContactsService,
-	createUserContactsService
+	createUserContactService
 } from "../../services/contacts";
 
-const createUserContactsController = async (req: Request, res: Response) => {
+const createUserContactController = async (req: Request, res: Response) => {
 	const foundUser: iUser = req.foundUser;
-	const contacstData: iContactsCreate = req.body;
+	const contacstData: iContactCreate = req.body;
 
-	const userContacts = await createUserContactsService(contacstData, foundUser);
+	const userContacts = await createUserContactService(contacstData, foundUser);
 
 	return res.status(201).json(userContacts);
 };
@@ -52,5 +52,5 @@ export {
 	updateContactController,
 	deleteContactController,
 	listUserContactsController,
-	createUserContactsController
+	createUserContactController
 };

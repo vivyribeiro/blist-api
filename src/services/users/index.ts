@@ -1,11 +1,13 @@
-import createUserService from "./createUser.service";
 import listUsersService from "./listUsers.service";
+import createUserService from "./createUser.service";
 import updateUserService from "./updateUser.service";
 import softDeleteUserService from "./softDeleteUser.service";
+import retrieveUserReportService from "./retrieveUserReport.service";
 
 export {
-	createUserService,
 	listUsersService,
+	createUserService,
 	updateUserService,
-	softDeleteUserService
+	softDeleteUserService,
+	retrieveUserReportService
 };

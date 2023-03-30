@@ -1,28 +1,30 @@
 import { z } from "zod";
 import { userSchema, responseUserSchema } from "../users";
 
-const contactSchema = userSchema
-	.omit({
-		password: true,
-		role: true,
-		deletedAt: true
-	})
-	.extend({
-		user: userSchema
-	});
+const contactSchema = z.object({
+	id: z.string().uuid(),
+	fullName: z.string().min(2).max(50),
+	email: z.string().email().min(7).max(70),
+	telephone: z.string().length(11),
+	createdAt: z.date(),
+	updatedAt: z.date()
+});
 
-const createContactsSchema = contactSchema
-	.omit({
-		id: true,
-		createdAt: true,
-		updatedAt: true,
-		user: true
-	})
-	.array();
+const userContactSchema = contactSchema.extend({
+	user: userSchema
+});
 
-const responseContactSchema = contactSchema.omit({ user: true });
+const createContactSchema = contactSchema.omit({
+	id: true,
+	createdAt: true,
+	updatedAt: true
+});
 
-const updateContactSchema = responseContactSchema
+const responseUserContactSchema = contactSchema.extend({
+	user: responseUserSchema
+});
+
+const updateContactSchema = contactSchema
 	.pick({
 		fullName: true,
 		email: true,
@@ -30,12 +32,13 @@ const updateContactSchema = responseContactSchema
 	})
 	.partial();
 
-const listContactsSchema = z.array(responseContactSchema);
+const listContactsSchema = z.array(responseUserContactSchema);
 
 export {
 	contactSchema,
+	userContactSchema,
 	listContactsSchema,
-	createContactsSchema,
+	createContactSchema,
 	updateContactSchema,
-	responseContactSchema
+	responseUserContactSchema
 };

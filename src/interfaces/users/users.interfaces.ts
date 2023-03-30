@@ -4,6 +4,7 @@ import {
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,
+	userReportSchema,
 	responseUserSchema
 } from "../../schemas/users";
 import { iContactsList } from "../contacts";
@@ -21,6 +22,8 @@ type iUserCreate = z.infer<typeof createUserSchema>;
 
 type iUserUpdate = z.infer<typeof updateUserSchema>;
 
+type iUserReport = z.infer<typeof userReportSchema>;
+
 type iUserResponse = z.infer<typeof responseUserSchema>;
 
 interface paginationList {
@@ -36,6 +39,7 @@ export {
 	iUsersList,
 	iUserUpdate,
 	iUserCreate,
+	iUserReport,
 	iUserResponse,
 	paginationList
 };

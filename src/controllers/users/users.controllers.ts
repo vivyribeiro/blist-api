@@ -3,11 +3,13 @@ import {
 	listUsersService,
 	createUserService,
 	updateUserService,
-	softDeleteUserService
+	softDeleteUserService,
+	retrieveUserReportService
 } from "../../services/users";
 import {
 	iUser,
 	iUserCreate,
+	iUserReport,
 	iUserUpdate,
 	paginationList
 } from "../../interfaces/users";
@@ -28,6 +30,14 @@ const listUsersController = async (req: Request, res: Response) => {
 	);
 
 	return res.json(usersPagination);
+};
+
+const retrieveUserReportController = async (req: Request, res: Response) => {
+	const foundUser: iUser = req.foundUser;
+
+	const userReport: iUserReport = await retrieveUserReportService(foundUser);
+
+	return res.json(userReport);
 };
 
 const updateUserController = async (req: Request, res: Response) => {
@@ -52,5 +62,6 @@ export {
 	listUsersController,
 	createUserController,
 	updateUserController,
-	softDeleteUserController
+	softDeleteUserController,
+	retrieveUserReportController
 };

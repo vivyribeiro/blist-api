@@ -85,16 +85,17 @@
 						"bearerAuth": []
 					}
 				],
+				"parameters": [
+					{ "$ref": "#/components/parameters/offsetParam" },
+					{ "$ref": "#/components/parameters/limitParam" }
+				],
 				"responses": {
 					"200": {
-						"description": "Usuário cadastrados",
+						"description": "Listagem de usuários com acesso permitido",
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/ResponseUser"
-									}
+									"$ref": "#/components/examples/usersPagination"
 								}
 							}
 						}
@@ -112,7 +113,7 @@
 			"patch": {
 				"tags": ["users"],
 				"summary": "Atualização de usuário",
-				"description": "Atualiza um usuário.",
+				"description": "Atualiza um usuário. O admin pode atualizar qualquer usuário, já outro tipo de usuário só pode atualizar ele mesmo.",
 				"parameters": [
 					{
 						"name": "id",
@@ -187,7 +188,53 @@
 				],
 				"responses": {
 					"204": {
-						"description": "Usuário desabilitado"
+						"description": "Usuário desativado"
+					},
+					"401": {
+						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
+					},
+					"404": {
+						"description": "Usuário não encontrado"
+					},
+					"409": {
+						"description": "Usuário já desativado"
+					}
+				}
+			}
+		},
+		"/users/{id}/report": {
+			"get": {
+				"tags": ["users"],
+				"summary": "Relatório do usuário",
+				"description": "Relatório dos contatos cadastrados pelo usuário. O admin pode solicitar o relátorio de qualquer usuário, já outro tipo de usuário só pode solicitar um relatório sobre ele mesmo.",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"description": "Id do usuário",
+						"required": true,
+						"type": "string",
+						"format": "uuid"
+					}
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Listagem do usuário e seus contatos cadastrados",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/userReport"
+								}
+							}
+						}
 					},
 					"401": {
 						"description": "Token não enviado ou inválido"
@@ -278,10 +325,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "array",
-								"items": {
-									"$ref": "#/components/schemas/CreateContact"
-								}
+								"$ref": "#/components/schemas/CreateContact"
 							}
 						}
 					}
@@ -292,10 +336,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/ResponseContact"
-									}
+									"$ref": "#/components/schemas/ResponseContact"
 								}
 							}
 						}
@@ -307,35 +348,39 @@
 						"description": "Token não enviado ou inválido"
 					},
 					"409": {
-						"description": "Já existe contato(s) com o email(s)/telefone(s) informado(s)"
+						"description": "Já existe um contato desse usuário com o email/telefone informado"
 					}
 				}
 			},
 			"get": {
 				"tags": ["contacts"],
-				"summary": "Listagem dos contatos cadastrados do usuário autenticado",
-				"description": "Lista de contatos de um usuário. Usuário identificado pelo token.",
+				"summary": "Listagem dos contatos cadastrados",
+				"description": "Lista de contatos existentes. Rota permitida somente por administradores.",
 				"security": [
 					{
 						"bearerAuth": []
 					}
 				],
+				"parameters": [
+					{ "$ref": "#/components/parameters/offsetParam" },
+					{ "$ref": "#/components/parameters/limitParam" }
+				],
 				"responses": {
 					"200": {
-						"description": "Lista de contatos do usuário.",
+						"description": "Listagem de contatos com acesso permitido",
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/ResponseContact"
-									}
+									"$ref": "#/components/examples/contactsPagination"
 								}
 							}
 						}
 					},
 					"401": {
 						"description": "Token não enviado ou inválido"
+					},
+					"403": {
+						"description": "Usuário sem permissão de acesso"
 					}
 				}
 			}
@@ -394,7 +439,7 @@
 						"description": "Contato não encontrado"
 					},
 					"409": {
-						"description": "Já existe contato(s) com o email(s)/telefone(s) informado(s)"
+						"description": "Já existe um contato desse usuário com o email/telefone informado"
 					}
 				}
 			},
@@ -435,6 +480,28 @@
 		}
 	},
 	"components": {
+		"parameters": {
+			"offsetParam": {
+				"in": "query",
+				"name": "page",
+				"schema": {
+					"type": "number",
+					"minimum": 1,
+					"default": 1,
+					"description": "O número da página a uma ser mostrada. Por padrão inicia na 1ª página."
+				}
+			},
+			"limitParam": {
+				"in": "query",
+				"name": "perPage",
+				"schema": {
+					"type": "number",
+					"minimum": 1,
+					"default": 2,
+					"description": "A quantidade de itens a serem mostrados. Por padrão a quantidade por página é 2 itens."
+				}
+			}
+		},
 		"schemas": {
 			"CreateUser": {
 				"type": "object",
@@ -640,6 +707,95 @@
 						"example": "75991144557"
 					}
 				}
+			},
+			"userContact": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Identificador único do contato",
+						"example": "8ae6aa11-8c0f-4908-9e6a-35e7571d59ed"
+					},
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do contato",
+						"example": "Miguel Sousa"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email do contato",
+						"example": "miguel.sousa@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone do contato",
+						"example": "75991144557"
+					},
+					"createdAt": {
+						"type": "string",
+						"description": "Data e horário do cadastro do contato",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"description": "Data e horário de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"user": {
+						"$ref": "#/components/schemas/ResponseUser"
+					}
+				}
+			},
+			"userReport": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Identificador único do usuário",
+						"example": "d4a10c9a-075e-492d-8c16-a2e5020aeb85"
+					},
+					"fullName": {
+						"type": "string",
+						"description": "Nome completo do usuário",
+						"example": "Viviane Ribeiro"
+					},
+					"email": {
+						"type": "string",
+						"description": "Email de cadastro do usuário",
+						"example": "vivy.saribeiro@gmail.com"
+					},
+					"telephone": {
+						"type": "string",
+						"description": "Telefone de contato do usuário",
+						"example": "75988445566"
+					},
+					"role": {
+						"enum": ["admin", "client"],
+						"description": "Papel do usuário no sistema",
+						"example": "admin"
+					},
+					"createdAt": {
+						"type": "string",
+						"description": "Data e horário do cadastro do usuário",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"description": "Data e horário de atualização feita no cadastro do usuário. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27T14:11:16.159Z"
+					},
+					"deletedAt": {
+						"type": "string",
+						"description": "Data e horário em que a conta do usuário foi desativada, na sua criação recebe o valor null",
+						"example": null
+					},
+					"contacts": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ResponseContact"
+						}
+					}
+				}
 			}
 		},
 		"securitySchemes": {
@@ -648,6 +804,60 @@
 				"type": "http",
 				"scheme": "bearer",
 				"bearerFormat": "JWT"
+			}
+		},
+		"examples": {
+			"usersPagination": {
+				"type": "object",
+				"properties": {
+					"previousPage": {
+						"type": "string",
+						"description": "O endereço da página anterior à exibida. Se não houver página anterior recebe o valor de null.",
+						"example": null
+					},
+					"nextPage": {
+						"type": "string",
+						"description": "O endereço da próxima página à exibida. Se não houver próxima página recebe o valor de null.",
+						"example": null
+					},
+					"count": {
+						"type": "number",
+						"description": "Total de itens a serem mostrados",
+						"example": 1
+					},
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ResponseUser"
+						}
+					}
+				}
+			},
+			"contactsPagination": {
+				"type": "object",
+				"properties": {
+					"previousPage": {
+						"type": "string",
+						"description": "O endereço da página anterior à exibida. Se não houver página anterior recebe o valor de null.",
+						"example": null
+					},
+					"nextPage": {
+						"type": "string",
+						"description": "O endereço da próxima página à exibida. Se não houver próxima página recebe o valor de null.",
+						"example": null
+					},
+					"count": {
+						"type": "number",
+						"description": "Total de itens a serem mostrados",
+						"example": 1
+					},
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/userContact"
+						}
+					}
+				}
 			}
 		}
 	}
