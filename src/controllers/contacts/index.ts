@@ -2,12 +2,12 @@ import {
 	updateContactController,
 	deleteContactController,
 	listUserContactsController,
-	createUserContactsController
+	createUserContactController
 } from "./contacts.controllers";
 
 export {
 	updateContactController,
 	deleteContactController,
 	listUserContactsController,
-	createUserContactsController
+	createUserContactController
 };

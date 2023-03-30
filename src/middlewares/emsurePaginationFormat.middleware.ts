@@ -2,6 +2,7 @@ import { listUsersSchema } from "../schemas/users";
 import { NextFunction, Request, Response } from "express";
 import { iUsersList, paginationList } from "../interfaces/users";
 import { contactRepository, userRepository } from "../repositories";
+import { listContactsSchema } from "../schemas/contacts";
 
 const ensurePaginationFormatMiddleware = async (
 	req: Request,
@@ -31,22 +32,26 @@ const ensurePaginationFormatMiddleware = async (
 		});
 	} else {
 		list = await contactRepository.find({
-			where: {
+			relations: {
+				user: true
+			},
+			select: {
 				user: {
-					id: req.foundUser.id
+					id: true,
+					fullName: true,
+					email: true,
+					telephone: true,
+					role: true,
+					createdAt: true,
+					updatedAt: true,
+					deletedAt: true
 				}
 			},
 			take: perPageValue,
 			skip: (pageValue - 1) * perPageValue
 		});
 
-		quantity = await contactRepository.count({
-			where: {
-				user: {
-					id: req.foundUser.id
-				}
-			}
-		});
+		quantity = await contactRepository.count();
 	}
 
 	const listPagination: paginationList = {

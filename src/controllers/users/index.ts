@@ -2,12 +2,14 @@ import {
 	listUsersController,
 	createUserController,
 	updateUserController,
-	softDeleteUserController
+	softDeleteUserController,
+	retrieveUserReportController
 } from "./users.controllers";
 
 export {
 	listUsersController,
 	createUserController,
 	updateUserController,
-	softDeleteUserController
+	softDeleteUserController,
+	retrieveUserReportController
 };

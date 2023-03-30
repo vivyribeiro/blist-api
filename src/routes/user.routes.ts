@@ -3,19 +3,18 @@ import {
 	listUsersController,
 	createUserController,
 	updateUserController,
-	softDeleteUserController
+	softDeleteUserController,
+	retrieveUserReportController
 } from "../controllers/users";
 import {
 	ensureIsAdminMiddleware,
 	ensureDataIsValidMiddleware,
 	ensureTokenIsValidMiddleware,
 	ensurePaginationFormatMiddleware,
-	ensureIsSameUserOrAdminMiddleware
+	ensureIsSameUserOrAdminMiddleware,
+	ensureEmailOrTelephoneExistsMiddleware
 } from "../middlewares";
-import {
-	ensureUserExistsMiddleware,
-	ensureUserEmailOrTelephoneExistsMiddleware
-} from "../middlewares/users";
+import { ensureUserExistsMiddleware } from "../middlewares/users";
 import { createUserSchema, updateUserSchema } from "../schemas/users";
 
 const userRoutes = Router();
@@ -23,7 +22,7 @@ const userRoutes = Router();
 userRoutes.post(
 	"/",
 	ensureDataIsValidMiddleware(createUserSchema),
-	ensureUserEmailOrTelephoneExistsMiddleware,
+	ensureEmailOrTelephoneExistsMiddleware,
 	createUserController
 );
 userRoutes.get(
@@ -35,13 +34,21 @@ userRoutes.get(
 	listUsersController
 );
 
+userRoutes.get(
+	"/:id/report",
+	ensureTokenIsValidMiddleware,
+	ensureUserExistsMiddleware,
+	ensureIsSameUserOrAdminMiddleware,
+	retrieveUserReportController
+);
+
 userRoutes.patch(
 	"/:id",
 	ensureTokenIsValidMiddleware,
 	ensureUserExistsMiddleware,
 	ensureIsSameUserOrAdminMiddleware,
 	ensureDataIsValidMiddleware(updateUserSchema),
-	ensureUserEmailOrTelephoneExistsMiddleware,
+	ensureEmailOrTelephoneExistsMiddleware,
 	updateUserController
 );
 userRoutes.delete(

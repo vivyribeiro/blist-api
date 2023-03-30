@@ -1,8 +1,8 @@
+import { AppError } from "../errors";
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../../errors";
-import { contactRepository, userRepository } from "../../repositories";
+import { contactRepository, userRepository } from "../repositories";
 
-const ensureUserEmailOrTelephoneExistsMiddleware = async (
+const ensureEmailOrTelephoneExistsMiddleware = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
@@ -63,4 +63,4 @@ const ensureUserEmailOrTelephoneExistsMiddleware = async (
 	return next();
 };
 
-export default ensureUserEmailOrTelephoneExistsMiddleware;
+export default ensureEmailOrTelephoneExistsMiddleware;

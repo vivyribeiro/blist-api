@@ -3,6 +3,7 @@ import {
 	iUsersList,
 	iUserUpdate,
 	iUserCreate,
+	iUserReport,
 	iUserResponse,
 	paginationList
 } from "./users.interfaces";
@@ -12,6 +13,7 @@ export {
 	iUsersList,
 	iUserUpdate,
 	iUserCreate,
+	iUserReport,
 	iUserResponse,
 	paginationList
 };

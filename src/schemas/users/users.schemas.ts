@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { listContactsSchema } from "../contacts";
 
 const validIdSchema = z.object({
 	id: z.string().uuid("The id must be the type uuid.")
@@ -25,6 +26,10 @@ const createUserSchema = userSchema.omit({
 
 const responseUserSchema = userSchema.omit({ password: true });
 
+const userReportSchema = responseUserSchema.extend({
+	contacts: listContactsSchema
+});
+
 const updateUserSchema = userSchema
 	.pick({
 		fullName: true,
@@ -42,5 +47,6 @@ export {
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,
+	userReportSchema,
 	responseUserSchema
 };

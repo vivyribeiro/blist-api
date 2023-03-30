@@ -1,19 +1,22 @@
 import { z } from "zod";
 import {
 	contactSchema,
+	userContactSchema,
 	listContactsSchema,
 	updateContactSchema,
-	createContactsSchema,
-	responseContactSchema
+	createContactSchema,
+	responseUserContactSchema
 } from "../../schemas/contacts";
 
-type iContact = z.infer<typeof contactSchema>;
+type iContact = z.infer<typeof userContactSchema>;
 
-type iContactsCreate = z.infer<typeof createContactsSchema>;
+type iContactCreate = z.infer<typeof createContactSchema>;
 
 type iContactUpdate = z.infer<typeof updateContactSchema>;
 
-type iContactResponse = z.infer<typeof responseContactSchema>;
+type iContactResponse = z.infer<typeof contactSchema>;
+
+type iUserContactResponse = z.infer<typeof responseUserContactSchema>;
 
 type iContactsList = z.infer<typeof listContactsSchema>;
 
@@ -21,6 +24,7 @@ export {
 	iContact,
 	iContactsList,
 	iContactUpdate,
-	iContactsCreate,
-	iContactResponse
+	iContactCreate,
+	iContactResponse,
+	iUserContactResponse
 };

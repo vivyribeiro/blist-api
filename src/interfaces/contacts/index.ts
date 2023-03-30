@@ -1,15 +1,17 @@
 import {
 	iContact,
 	iContactsList,
-	iContactsCreate,
+	iContactCreate,
 	iContactUpdate,
-	iContactResponse
+	iContactResponse,
+	iUserContactResponse
 } from "./contacts.interfaces";
 
 export {
 	iContact,
 	iContactsList,
-	iContactsCreate,
+	iContactCreate,
 	iContactUpdate,
-	iContactResponse
+	iContactResponse,
+	iUserContactResponse
 };

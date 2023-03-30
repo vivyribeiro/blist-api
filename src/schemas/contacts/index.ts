@@ -1,15 +1,17 @@
 import {
 	contactSchema,
+	userContactSchema,
 	listContactsSchema,
 	updateContactSchema,
-	createContactsSchema,
-	responseContactSchema
+	createContactSchema,
+	responseUserContactSchema
 } from "./contacts.schemas";
 
 export {
 	contactSchema,
+	userContactSchema,
 	listContactsSchema,
 	updateContactSchema,
-	createContactsSchema,
-	responseContactSchema
+	createContactSchema,
+	responseUserContactSchema
 };

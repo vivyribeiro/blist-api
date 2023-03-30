@@ -3,6 +3,7 @@ import {
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,
+	userReportSchema,
 	responseUserSchema
 } from "./users.schemas";
 
@@ -11,5 +12,6 @@ export {
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,
+	userReportSchema,
 	responseUserSchema
 };
