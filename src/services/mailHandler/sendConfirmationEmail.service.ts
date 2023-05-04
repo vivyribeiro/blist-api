@@ -30,7 +30,7 @@ const sendConfirmationEmailService = async (user: iUser) => {
 		name: user.fullName,
 		btnText: "Confirmar e-mail",
 		subject: "Por favor, confirme sua conta",
-		btnLink: `${frontURL}/confirm_email/${token}`,
+		btnLink: `${frontURL}confirm_email/${token}`,
 		instructions:
 			"Clique no botão abaixo para confirmar o e-mail da sua conta:",
 		intro:
