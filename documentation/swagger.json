@@ -19,12 +19,12 @@
 	},
 	"servers": [
 		{
-			"url": "http://localhost:3001",
-			"description": "Ambiente de Desenvolmento"
-		},
-		{
 			"url": "https://blist-api.onrender.com",
 			"description": "Ambiente de Produção"
+		},
+		{
+			"url": "http://localhost:3001",
+			"description": "Ambiente de Desenvolmento"
 		}
 	],
 	"tags": [
