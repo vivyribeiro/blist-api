@@ -11,10 +11,12 @@ import {
 	ensureDataIsValidMiddleware,
 	ensureTokenIsValidMiddleware,
 	ensurePaginationFormatMiddleware,
-	ensureIsSameUserOrAdminMiddleware,
-	ensureEmailOrTelephoneExistsMiddleware
+	ensureIsSameUserOrAdminMiddleware
 } from "../middlewares";
-import { ensureUserExistsMiddleware } from "../middlewares/users";
+import {
+	ensureUserExistsMiddleware,
+	verifyUserEmailOrTelephoneExistsMiddleware
+} from "../middlewares/users";
 import { createUserSchema, updateUserSchema } from "../schemas/users";
 
 const userRoutes = Router();
@@ -22,7 +24,7 @@ const userRoutes = Router();
 userRoutes.post(
 	"/",
 	ensureDataIsValidMiddleware(createUserSchema),
-	ensureEmailOrTelephoneExistsMiddleware,
+	verifyUserEmailOrTelephoneExistsMiddleware,
 	createUserController
 );
 userRoutes.get(
@@ -48,7 +50,7 @@ userRoutes.patch(
 	ensureUserExistsMiddleware,
 	ensureIsSameUserOrAdminMiddleware,
 	ensureDataIsValidMiddleware(updateUserSchema),
-	ensureEmailOrTelephoneExistsMiddleware,
+	verifyUserEmailOrTelephoneExistsMiddleware,
 	updateUserController
 );
 userRoutes.delete(

@@ -1,9 +1,6 @@
 import { paginationList } from "../../interfaces/users";
-import { listContactsSchema } from "../../schemas/contacts";
 
-const listUserContactsService = async (
-	list: paginationList
-): Promise<paginationList> => {
+const listUserContactsService = (list: paginationList): paginationList => {
 	return list;
 };
 

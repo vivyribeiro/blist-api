@@ -21,12 +21,11 @@ const createUserContactController = async (req: Request, res: Response) => {
 	return res.status(201).json(userContacts);
 };
 
-const listUserContactsController = async (req: Request, res: Response) => {
+const listUserContactsController = (req: Request, res: Response) => {
 	const listPagination = req.listPagination;
 
-	const contactsPagination: paginationList = await listUserContactsService(
-		listPagination
-	);
+	const contactsPagination: paginationList =
+		listUserContactsService(listPagination);
 
 	return res.json(contactsPagination);
 };

@@ -1,3 +1,3 @@
-import { iLogin, iToken } from "./session.interfaces";
+import { iLogin, iToken, iUserLogin } from "./session.interfaces";
 
-export { iLogin, iToken };
+export { iLogin, iToken, iUserLogin };

@@ -1,8 +1,15 @@
 import { z } from "zod";
-import { loginSchema, tokenSchema } from "../../schemas/session";
+import {
+	loginSchema,
+	tokenSchema,
+	userLoginSchema
+} from "../../schemas/session";
+import { iUserReport } from "../users";
 
 type iLogin = z.infer<typeof loginSchema>;
 
 type iToken = z.infer<typeof tokenSchema>;
 
-export { iLogin, iToken };
+type iUserLogin = z.infer<typeof userLoginSchema>;
+
+export { iLogin, iToken, iUserLogin };

@@ -2,7 +2,6 @@ import { listUsersSchema } from "../schemas/users";
 import { NextFunction, Request, Response } from "express";
 import { iUsersList, paginationList } from "../interfaces/users";
 import { contactRepository, userRepository } from "../repositories";
-import { listContactsSchema } from "../schemas/contacts";
 
 const ensurePaginationFormatMiddleware = async (
 	req: Request,
@@ -23,7 +22,8 @@ const ensurePaginationFormatMiddleware = async (
 		const listUsers: iUsersList = await userRepository.find({
 			withDeleted: true,
 			take: perPageValue,
-			skip: (pageValue - 1) * perPageValue
+			skip: (pageValue - 1) * perPageValue,
+			order: { createdAt: "DESC" }
 		});
 
 		list = listUsersSchema.parse(listUsers);
@@ -48,7 +48,8 @@ const ensurePaginationFormatMiddleware = async (
 				}
 			},
 			take: perPageValue,
-			skip: (pageValue - 1) * perPageValue
+			skip: (pageValue - 1) * perPageValue,
+			order: { createdAt: "DESC" }
 		});
 
 		quantity = await contactRepository.count();

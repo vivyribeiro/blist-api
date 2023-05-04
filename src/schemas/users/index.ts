@@ -1,5 +1,6 @@
 import {
 	userSchema,
+	validIdSchema,
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,
@@ -9,6 +10,7 @@ import {
 
 export {
 	userSchema,
+	validIdSchema,
 	listUsersSchema,
 	createUserSchema,
 	updateUserSchema,

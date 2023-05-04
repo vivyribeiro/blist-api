@@ -5,9 +5,12 @@ const contactSchema = z.object({
 	id: z.string().uuid(),
 	fullName: z.string().min(2).max(50),
 	email: z.string().email().min(7).max(70),
-	telephone: z.string().length(11),
-	createdAt: z.date(),
-	updatedAt: z.date()
+	telephone: z
+		.string()
+		.length(11)
+		.regex(/^[0-9]+$/, "Phone number must contain only numbers"),
+	createdAt: z.string(),
+	updatedAt: z.string()
 });
 
 const userContactSchema = contactSchema.extend({

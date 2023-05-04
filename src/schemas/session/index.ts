@@ -1,3 +1,3 @@
-import { loginSchema, tokenSchema } from "./session.schemas";
+import { loginSchema, tokenSchema, userLoginSchema } from "./session.schemas";
 
-export { loginSchema, tokenSchema };
+export { loginSchema, tokenSchema, userLoginSchema };

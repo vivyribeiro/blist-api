@@ -3,8 +3,8 @@ import {
 	listUsersService,
 	createUserService,
 	updateUserService,
-	softDeleteUserService,
-	retrieveUserReportService
+	generatePDFService,
+	softDeleteUserService
 } from "../../services/users";
 import {
 	iUser,
@@ -13,21 +13,20 @@ import {
 	iUserUpdate,
 	paginationList
 } from "../../interfaces/users";
+import { profileUserService } from "../../services/session";
 
 const createUserController = async (req: Request, res: Response) => {
 	const userData: iUserCreate = req.body;
 
-	const newUser = await createUserService(userData);
+	const message = await createUserService(userData);
 
-	return res.status(201).json(newUser);
+	return res.status(201).json({ message });
 };
 
-const listUsersController = async (req: Request, res: Response) => {
+const listUsersController = (req: Request, res: Response) => {
 	const listPagination = req.listPagination;
 
-	const usersPagination: paginationList = await listUsersService(
-		listPagination
-	);
+	const usersPagination: paginationList = listUsersService(listPagination);
 
 	return res.json(usersPagination);
 };
@@ -35,17 +34,17 @@ const listUsersController = async (req: Request, res: Response) => {
 const retrieveUserReportController = async (req: Request, res: Response) => {
 	const foundUser: iUser = req.foundUser;
 
-	const userReport: iUserReport = await retrieveUserReportService(foundUser);
+	const userReport: iUserReport = await profileUserService(foundUser);
+	req.body = userReport;
 
-	return res.json(userReport);
+	generatePDFService(req, res);
 };
 
 const updateUserController = async (req: Request, res: Response) => {
 	const userData: iUserUpdate = req.body;
-	const reqRole: string = req.user.role;
 	const foundUser: iUser = req.foundUser;
 
-	const updatedUser = await updateUserService(userData, foundUser, reqRole);
+	const updatedUser = await updateUserService(userData, foundUser);
 
 	return res.json(updatedUser);
 };

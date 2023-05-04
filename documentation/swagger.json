@@ -37,6 +37,10 @@
 			"description": "Autenticação do usuário e entrada no sistema"
 		},
 		{
+			"name": "reset and confirmation",
+			"description": "Operações de recuperação e confirmação sobre a conta do usuário"
+		},
+		{
 			"name": "contacts",
 			"description": "Operações sobre os contatos do usuário"
 		}
@@ -46,7 +50,7 @@
 			"post": {
 				"tags": ["users"],
 				"summary": "Criação de usuário",
-				"description": "Cria um novo usuário.",
+				"description": "Cria um novo usuário. E o usuário recebe em seu e-mail um link de confirmação da conta válido por 1h, a fim de usufruir dos recursos da aplicação.",
 				"requestBody": {
 					"description": "Dados necessários para criar um novo usuário",
 					"content": {
@@ -63,16 +67,37 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ResponseUser"
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"description": "Mensagem de sucesso",
+											"example": "Usuário cadastrado com sucesso. Por favor, verifique seu e-mail"
+										}
+									}
 								}
 							}
 						}
 					},
 					"400": {
-						"description": "Dados imcompletos ou inválidos para cadastro"
+						"description": "Dados imcompletos ou inválidos para cadastro",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidRequiredBody"
+								}
+							}
+						}
 					},
 					"409": {
-						"description": "Já existe um usuário com o email/telefone informado"
+						"description": "Já existe um usuário com o email/telefone informado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserConflictData"
+								}
+							}
+						}
 					}
 				}
 			},
@@ -101,10 +126,24 @@
 						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -151,19 +190,54 @@
 						}
 					},
 					"400": {
-						"description": "Dados imcompletos ou inválidos para cadastro"
+						"description": "Dados imcompletos ou inválidos para cadastro",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidOptionalBody"
+								}
+							}
+						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					},
 					"404": {
-						"description": "Usuário não encontrado"
+						"description": "Usuário não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserNotFound"
+								}
+							}
+						}
 					},
 					"409": {
-						"description": "Já existe um usuário com o email/telefone informado"
+						"description": "Já existe um usuário com o email/telefone informado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserConflictData"
+								}
+							}
+						}
 					}
 				}
 			},
@@ -191,16 +265,51 @@
 						"description": "Usuário desativado"
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					},
 					"404": {
-						"description": "Usuário não encontrado"
+						"description": "Usuário não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserNotFound"
+								}
+							}
+						}
 					},
 					"409": {
-						"description": "Usuário já desativado"
+						"description": "Usuário já desativado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"description": "Mensagem de erro",
+											"example": "Usuário já desativado"
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -209,7 +318,8 @@
 			"get": {
 				"tags": ["users"],
 				"summary": "Relatório do usuário",
-				"description": "Relatório dos contatos cadastrados pelo usuário. O admin pode solicitar o relátorio de qualquer usuário, já outro tipo de usuário só pode solicitar um relatório sobre ele mesmo.",
+				"description": "É gerado um relatório em pdf dos contatos cadastrados pelo usuário. O admin pode solicitar o relátorio de qualquer usuário, já outro tipo de usuário só pode solicitar um relatório sobre ele mesmo.",
+				"produces": ["application/pdf"],
 				"parameters": [
 					{
 						"name": "id",
@@ -227,23 +337,286 @@
 				],
 				"responses": {
 					"200": {
-						"description": "Listagem do usuário e seus contatos cadastrados",
-						"content": {
-							"application/json": {
+						"description": "PDF com a listagem do usuário e seus contatos cadastrados",
+						"headers": {
+							"Content-Disposition": {
 								"schema": {
-									"$ref": "#/components/schemas/userReport"
+									"type": "string",
+									"example": "filename=\"Relatório.pdf"
+								}
+							}
+						},
+						"content": {
+							"application/pdf": {
+								"schema": {
+									"type": "file",
+									"format": "binary",
+									"example": "Relatório.pdf"
 								}
 							}
 						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					},
 					"404": {
-						"description": "Usuário não encontrado"
+						"description": "Usuário não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserNotFound"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/confirm_email/{token}": {
+			"get": {
+				"tags": ["reset and confirmation"],
+				"summary": "Confirmação da conta do usuário",
+				"description": "O usuário recebe no e-mail cadastrado o link com um token de ativação, ao abrir o link ele confirma o e-mail e libera os recursos da aplicação para uso. O link é válido por 1h.",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"description": "Token para confirmação do email do usuário",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "E-mail verificado com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Mensagem de sucesso",
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "E-mail verificado com sucesso"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Link inválido ou expirado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidLink"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Token não enviado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/TokenNotFound"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reset_password": {
+			"post": {
+				"tags": ["reset and confirmation"],
+				"summary": "Solicitação de redefinição de senha do usuário",
+				"description": "O usuário envia seu o e-mail para receber o link com o token para mudar sua senha.",
+				"requestBody": {
+					"description": "Dado necessário para a requisição",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"description": "Dado da requisição",
+								"properties": {
+									"email": {
+										"type": "string",
+										"description": "Email de cadastro do usuário",
+										"example": "vivy.saribeiro@gmail.com"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "E-mail enviado com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Dado da requisição",
+									"properties": {
+										"message": {
+											"type": "string",
+											"description": "Mensagem de sucesso",
+											"example": "E-mail enviado com sucesso"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dado incompleto ou incorreto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidRequiredBody"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Usuário não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/UserNotFound"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "E-mail não enviado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Mensagem de erro",
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Ocorreu um erro ao enviar o e-mail, tente mais tarde."
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reset_password/{token}": {
+			"patch": {
+				"tags": ["reset and confirmation"],
+				"summary": "Redefinição de senha do usuário",
+				"description": "Por meio do token enviado e verificado, é possível o usuário mudar sua senha, enviado a nova na requisição. O link é válido por 1h.",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"description": "Token para redefinição de senha",
+						"required": true,
+						"type": "http",
+						"format": "JWT"
+					}
+				],
+				"requestBody": {
+					"description": "Dado necessário para a requisição",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"description": "Dado da requisição",
+								"properties": {
+									"password": {
+										"type": "string",
+										"description": "Nova senha do usuário",
+										"example": "T&st123"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Senha atualizada com sucesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Dado da requisição",
+									"properties": {
+										"message": {
+											"type": "string",
+											"description": "Mensagem de sucesso",
+											"example": "Senha atualizada com sucesso"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Dados incompleto ou incorreto",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Mensagem de erro",
+									"properties": {
+										"[key: password]": {
+											"type": "array",
+											"items": {
+												"type": "string",
+												"example": "Obrigatório"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Link inválido ou expirado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidLink"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Token não enviado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/TokenNotFound"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -252,7 +625,7 @@
 			"post": {
 				"tags": ["session"],
 				"summary": "Entrada do usuário do sistema",
-				"description": "Autenticação do usuário por meio das suas credenciais",
+				"description": "Autenticação do usuário por meio das suas credenciais. Caso o usúario ao fazer login tiver sido desativado, o mesmo é reativado automativamente.",
 				"requestBody": {
 					"description": "Dados necessários para entrar no sistema",
 					"content": {
@@ -269,16 +642,37 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TokenUser"
+									"$ref": "#/components/schemas/userLoginResponse"
 								}
 							}
 						}
 					},
 					"400": {
-						"description": "Dados incompletos ou incorretos"
+						"description": "Dados incompletos ou incorretos",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidRequiredBody"
+								}
+							}
+						}
 					},
 					"401": {
-						"description": "Credenciais inválidas"
+						"description": "Credenciais inválidas",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"description": "Mensagem de erro",
+											"example": "O e-mail ou a senha é inválida"
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -287,7 +681,7 @@
 			"get": {
 				"tags": ["session"],
 				"summary": "Perfil do usuário",
-				"description": "Lista perfil do usuário autenticado. Rota pode ser utilizado como autologin.",
+				"description": "Retorna os dados do usuário autenticado. Rota pode ser utilizado como autologin.",
 				"security": [
 					{
 						"bearerAuth": []
@@ -305,7 +699,14 @@
 						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -332,7 +733,7 @@
 				},
 				"responses": {
 					"201": {
-						"description": "Cadastro do usuário feito com sucesso",
+						"description": "Cadastro do contato feito com sucesso",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -342,13 +743,34 @@
 						}
 					},
 					"400": {
-						"description": "Dados imcompletos ou inválidos para cadastro"
+						"description": "Dados imcompletos ou inválidos para cadastro",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidRequiredBody"
+								}
+							}
+						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"409": {
-						"description": "Já existe um contato desse usuário com o email/telefone informado"
+						"description": "Já existe um contato desse usuário com o email/telefone informado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ContactConflictData"
+								}
+							}
+						}
 					}
 				}
 			},
@@ -377,10 +799,24 @@
 						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -427,19 +863,54 @@
 						}
 					},
 					"400": {
-						"description": "Dados imcompletos ou inválidos para atualização"
+						"description": "Dados imcompletos ou inválidos para atualização",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidOptionalBody"
+								}
+							}
+						}
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					},
 					"404": {
-						"description": "Contato não encontrado"
+						"description": "Contato não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ContactNotFound"
+								}
+							}
+						}
 					},
 					"409": {
-						"description": "Já existe um contato desse usuário com o email/telefone informado"
+						"description": "Já existe um contato desse usuário com o email/telefone informado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ContactConflictData"
+								}
+							}
+						}
 					}
 				}
 			},
@@ -467,13 +938,34 @@
 						"description": "Contato deletado"
 					},
 					"401": {
-						"description": "Token não enviado ou inválido"
+						"description": "Token não enviado ou inválido",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/InvalidToken"
+								}
+							}
+						}
 					},
 					"403": {
-						"description": "Usuário sem permissão de acesso"
+						"description": "Usuário sem permissão de acesso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ForbiddenAction"
+								}
+							}
+						}
 					},
 					"404": {
-						"description": "Contato não encontrado"
+						"description": "Contato não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/responses/ContactNotFound"
+								}
+							}
+						}
 					}
 				}
 			}
@@ -590,18 +1082,24 @@
 					},
 					"createdAt": {
 						"type": "string",
-						"description": "Data e horário do cadastro do usuário",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data do cadastro do usuário",
+						"example": "2023-03-27"
 					},
 					"updatedAt": {
 						"type": "string",
-						"description": "Data e horário de atualização feita no cadastro do usuário. Recebe o mesmo valor do \"createdAt\" na sua criação",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data de atualização feita no cadastro do usuário. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27"
 					},
 					"deletedAt": {
 						"type": "string",
-						"description": "Data e horário em que a conta do usuário foi desativada, na sua criação recebe o valor null",
+						"description": "Data em que a conta do usuário foi desativada, na sua criação recebe o valor null",
 						"example": null
+					},
+					"contacts": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ResponseContact"
+						}
 					}
 				}
 			},
@@ -621,7 +1119,7 @@
 				},
 				"required": ["email", "password"]
 			},
-			"TokenUser": {
+			"userLoginResponse": {
 				"type": "object",
 				"properties": {
 					"token": {
@@ -629,6 +1127,9 @@
 						"format": "JWT",
 						"description": "Token JWT",
 						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+					},
+					"user": {
+						"$ref": "#/components/schemas/ResponseUser"
 					}
 				}
 			},
@@ -678,13 +1179,13 @@
 					},
 					"createdAt": {
 						"type": "string",
-						"description": "Data e horário do cadastro do contato",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data do cadastro do contato",
+						"example": "2023-03-27"
 					},
 					"updatedAt": {
 						"type": "string",
-						"description": "Data e horário de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27"
 					}
 				}
 			},
@@ -733,67 +1234,121 @@
 					},
 					"createdAt": {
 						"type": "string",
-						"description": "Data e horário do cadastro do contato",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data do cadastro do contato",
+						"example": "2023-03-27"
 					},
 					"updatedAt": {
 						"type": "string",
-						"description": "Data e horário de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
-						"example": "2023-03-27T14:11:16.159Z"
+						"description": "Data de atualização feita no contato. Recebe o mesmo valor do \"createdAt\" na sua criação",
+						"example": "2023-03-27"
 					},
 					"user": {
 						"$ref": "#/components/schemas/ResponseUser"
 					}
 				}
-			},
-			"userReport": {
+			}
+		},
+		"responses": {
+			"InvalidRequiredBody": {
 				"type": "object",
+				"description": "Mensagem de erro",
 				"properties": {
-					"id": {
-						"type": "string",
-						"description": "Identificador único do usuário",
-						"example": "d4a10c9a-075e-492d-8c16-a2e5020aeb85"
-					},
-					"fullName": {
-						"type": "string",
-						"description": "Nome completo do usuário",
-						"example": "Viviane Ribeiro"
-					},
-					"email": {
-						"type": "string",
-						"description": "Email de cadastro do usuário",
-						"example": "vivy.saribeiro@gmail.com"
-					},
-					"telephone": {
-						"type": "string",
-						"description": "Telefone de contato do usuário",
-						"example": "75988445566"
-					},
-					"role": {
-						"enum": ["admin", "client"],
-						"description": "Papel do usuário no sistema",
-						"example": "admin"
-					},
-					"createdAt": {
-						"type": "string",
-						"description": "Data e horário do cadastro do usuário",
-						"example": "2023-03-27T14:11:16.159Z"
-					},
-					"updatedAt": {
-						"type": "string",
-						"description": "Data e horário de atualização feita no cadastro do usuário. Recebe o mesmo valor do \"createdAt\" na sua criação",
-						"example": "2023-03-27T14:11:16.159Z"
-					},
-					"deletedAt": {
-						"type": "string",
-						"description": "Data e horário em que a conta do usuário foi desativada, na sua criação recebe o valor null",
-						"example": null
-					},
-					"contacts": {
+					"[key: email]": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ResponseContact"
+							"type": "string",
+							"example": "Obrigatório"
 						}
+					}
+				}
+			},
+			"InvalidOptionalBody": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Campos inválidos. Deve conter pelo menos um desses campos: fullName, email..."
+					}
+				}
+			},
+			"InvalidToken": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Token não enviado ou inválido"
+					}
+				}
+			},
+			"UserNotFound": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Usuário não encontrado"
+					}
+				}
+			},
+			"ContactNotFound": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Contato não encontrado"
+					}
+				}
+			},
+			"ForbiddenAction": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Você não tem permissão de executar está ação"
+					}
+				}
+			},
+			"UserConflictData": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Já existe um usuário com o email/telefone informado"
+					}
+				}
+			},
+			"ContactConflictData": {
+				"type": "object",
+				"description": "Mensagem de erro",
+				"properties": {
+					"message": {
+						"type": "string",
+						"example": "Já existe um contato desse usuário com o email/telefone informado"
+					}
+				}
+			},
+			"TokenNotFound": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string",
+						"description": "Mensagem de erro",
+						"example": "Token não foi encontrado"
+					}
+				}
+			},
+			"InvalidLink": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string",
+						"description": "Mensagem de erro",
+						"example": "Link inválido ou expirado"
 					}
 				}
 			}

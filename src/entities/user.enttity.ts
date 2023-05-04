@@ -38,14 +38,23 @@ class User {
 	})
 	role: "admin" | "client";
 
-	@CreateDateColumn({ type: "timestamp" })
-	createdAt: Date;
+	@Column({ nullable: true, type: "text" })
+	resetToken: string | null;
 
-	@UpdateDateColumn({ type: "timestamp" })
-	updatedAt: Date;
+	@Column({ default: false })
+	isEmailVerified: boolean;
 
-	@DeleteDateColumn({ nullable: true, type: "timestamp" })
-	deletedAt: Date | null;
+	@Column({ nullable: true, type: "text" })
+	confirmationToken: string | null;
+
+	@CreateDateColumn({ type: "date" })
+	createdAt: string;
+
+	@UpdateDateColumn({ type: "date" })
+	updatedAt: string;
+
+	@DeleteDateColumn({ nullable: true, type: "date" })
+	deletedAt: string | null;
 
 	@BeforeInsert()
 	@BeforeUpdate()

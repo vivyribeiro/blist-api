@@ -1,13 +1,11 @@
 import { AppError } from "../../errors";
 import { userRepository } from "../../repositories";
-import { UserRole } from "../../interfaces/users/users.interfaces";
 import { responseUserSchema, updateUserSchema } from "../../schemas/users";
 import { iUser, iUserResponse, iUserUpdate } from "../../interfaces/users";
 
 const updateUserService = async (
 	data: iUserUpdate,
-	foundUser: iUser,
-	reqRole: string
+	foundUser: iUser
 ): Promise<iUserResponse> => {
 	if (!Object.keys(data).length) {
 		throw new AppError(
@@ -20,10 +18,10 @@ const updateUserService = async (
 
 	const updatedUser = userRepository.create({
 		...foundUser,
-		fullName: data.fullName ? data.fullName : foundUser.fullName,
-		telephone: data.telephone ? data.telephone : foundUser.telephone,
 		email: data.email ? data.email : foundUser.email,
-		password: data.password ? data.password : foundUser.password
+		fullName: data.fullName ? data.fullName : foundUser.fullName,
+		password: data.password ? data.password : foundUser.password,
+		telephone: data.telephone ? data.telephone : foundUser.telephone
 	});
 
 	await userRepository.save(updatedUser);

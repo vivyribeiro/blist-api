@@ -10,7 +10,6 @@ const ensureUserExistsMiddleware = async (
 	next: NextFunction
 ): Promise<Response | void> => {
 	const id: string = req.params.id || req.user.id;
-
 	validIdSchema.parse({ id });
 
 	const foundUser: iUser | null = await userRepository.findOne({
