@@ -6,16 +6,16 @@ import {
 	createUserContactController
 } from "../controllers/contacts";
 import {
+	ensureIsAdminMiddleware,
 	ensureDataIsValidMiddleware,
 	ensureTokenIsValidMiddleware,
 	ensurePaginationFormatMiddleware,
-	ensureIsSameUserOrAdminMiddleware,
-	ensureEmailOrTelephoneExistsMiddleware,
-	ensureIsAdminMiddleware
+	ensureIsSameUserOrAdminMiddleware
 } from "../middlewares";
 import { ensureUserExistsMiddleware } from "../middlewares/users";
 import { ensureContactExistsMiddleware } from "../middlewares/contacts";
 import { createContactSchema, updateContactSchema } from "../schemas/contacts";
+import { verifyContactEmailOrTelephoneExistsMiddleware } from "../middlewares/contacts";
 
 const contactRoutes = Router();
 
@@ -24,7 +24,7 @@ contactRoutes.post(
 	ensureTokenIsValidMiddleware,
 	ensureUserExistsMiddleware,
 	ensureDataIsValidMiddleware(createContactSchema),
-	ensureEmailOrTelephoneExistsMiddleware,
+	verifyContactEmailOrTelephoneExistsMiddleware,
 	createUserContactController
 );
 
@@ -41,9 +41,8 @@ contactRoutes.patch(
 	"/:id",
 	ensureTokenIsValidMiddleware,
 	ensureContactExistsMiddleware,
-	ensureIsSameUserOrAdminMiddleware,
 	ensureDataIsValidMiddleware(updateContactSchema),
-	ensureEmailOrTelephoneExistsMiddleware,
+	verifyContactEmailOrTelephoneExistsMiddleware,
 	updateContactController
 );
 

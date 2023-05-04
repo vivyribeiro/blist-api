@@ -3,14 +3,22 @@ import jwt from "jsonwebtoken";
 import { compare } from "bcryptjs";
 import { AppError } from "../../errors";
 import { userRepository } from "../../repositories";
-import { iLogin, iToken } from "../../interfaces/session";
+import { userLoginSchema } from "../../schemas/session";
+import { iLogin, iUserLogin } from "../../interfaces/session";
+import { sendConfirmationEmailService } from "../mailHandler";
 
-const loginService = async ({ email, password }: iLogin): Promise<iToken> => {
+const loginService = async ({
+	email,
+	password
+}: iLogin): Promise<iUserLogin> => {
 	const user = await userRepository.findOne({
 		where: {
 			email
 		},
-		withDeleted: true
+		withDeleted: true,
+		relations: {
+			contacts: true
+		}
 	});
 
 	if (!user) {
@@ -19,6 +27,12 @@ const loginService = async ({ email, password }: iLogin): Promise<iToken> => {
 
 	if (user.deletedAt) {
 		await userRepository.recover(user);
+	}
+
+	if (!user.isEmailVerified) {
+		await sendConfirmationEmailService(user);
+
+		throw new AppError("Pending account. Please verify your e-mail!", 401);
 	}
 
 	const passwordMatch = await compare(password, user.password);
@@ -39,7 +53,10 @@ const loginService = async ({ email, password }: iLogin): Promise<iToken> => {
 		}
 	);
 
-	return { token };
+	return userLoginSchema.parse({
+		token,
+		user
+	});
 };
 
 export default loginService;

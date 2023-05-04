@@ -1,14 +1,15 @@
+import "dotenv/config";
 import { userRepository } from "../../repositories";
-import { responseUserSchema } from "../../schemas/users";
-import { iUser, iUserCreate, iUserResponse } from "../../interfaces/users";
+import { iUser, iUserCreate } from "../../interfaces/users";
+import { sendConfirmationEmailService } from "../mailHandler";
 
-const createUserService = async (
-	userData: iUserCreate
-): Promise<iUserResponse> => {
+const createUserService = async (userData: iUserCreate): Promise<string> => {
 	const user: iUser = userRepository.create(userData);
 	await userRepository.save(user);
 
-	return responseUserSchema.parse(user);
+	await sendConfirmationEmailService(user);
+
+	return "User was registered successfully! Please check your email.";
 };
 
 export default createUserService;

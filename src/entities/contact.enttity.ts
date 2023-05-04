@@ -16,17 +16,17 @@ class Contact {
 	@Column({ length: 50 })
 	fullName: string;
 
-	@Column({ length: 11, unique: true })
+	@Column({ length: 11 })
 	telephone: string;
 
-	@Column({ length: 70, unique: true })
+	@Column({ length: 70 })
 	email: string;
 
-	@CreateDateColumn({ type: "timestamp" })
-	createdAt: Date;
+	@CreateDateColumn({ type: "date" })
+	createdAt: string;
 
-	@UpdateDateColumn({ type: "timestamp" })
-	updatedAt: Date;
+	@UpdateDateColumn({ type: "date" })
+	updatedAt: string;
 
 	@ManyToOne(() => User, user => user.contacts)
 	user: User;

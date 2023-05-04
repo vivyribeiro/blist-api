@@ -10,12 +10,14 @@ const ensureContactExistsMiddleware = async (
 	next: NextFunction
 ): Promise<Response | void> => {
 	const { id } = req.params;
-
 	validIdSchema.parse({ id });
 
 	const foundContact: iContact | null = await contactRepository.findOne({
 		where: {
-			id
+			id,
+			user: {
+				id: req.user.id
+			}
 		},
 		relations: {
 			user: true

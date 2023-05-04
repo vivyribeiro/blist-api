@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { userReportSchema } from "../users";
 
 const loginSchema = z.object({
 	email: z.string().email(),
@@ -9,4 +10,8 @@ const tokenSchema = z.object({
 	token: z.string()
 });
 
-export { loginSchema, tokenSchema };
+const userLoginSchema = tokenSchema.extend({
+	user: userReportSchema
+});
+
+export { loginSchema, tokenSchema, userLoginSchema };
