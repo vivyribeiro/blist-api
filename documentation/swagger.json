@@ -153,16 +153,7 @@
 				"tags": ["users"],
 				"summary": "Atualização de usuário",
 				"description": "Atualiza um usuário. O admin pode atualizar qualquer usuário, já outro tipo de usuário só pode atualizar ele mesmo.",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Id do usuário",
-						"required": true,
-						"type": "string",
-						"format": "uuid"
-					}
-				],
+				"parameters": [{ "$ref": "#/components/parameters/userIdParam" }],
 				"security": [
 					{
 						"bearerAuth": []
@@ -245,16 +236,7 @@
 				"tags": ["users"],
 				"summary": "Deleção de usuário",
 				"description": "Desabilita o usuário com o id enviado na rota. O admin pode desabilitar qualquer usuário, já outro tipo de usuário só pode desabilitar ele mesmo.",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Id do usuário",
-						"required": true,
-						"type": "string",
-						"format": "uuid"
-					}
-				],
+				"parameters": [{ "$ref": "#/components/parameters/userIdParam" }],
 				"security": [
 					{
 						"bearerAuth": []
@@ -320,16 +302,7 @@
 				"summary": "Relatório do usuário",
 				"description": "É gerado um relatório em pdf dos contatos cadastrados pelo usuário. O admin pode solicitar o relátorio de qualquer usuário, já outro tipo de usuário só pode solicitar um relatório sobre ele mesmo.",
 				"produces": ["application/pdf"],
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Id do usuário",
-						"required": true,
-						"type": "string",
-						"format": "uuid"
-					}
-				],
+				"parameters": [{ "$ref": "#/components/parameters/userIdParam" }],
 				"security": [
 					{
 						"bearerAuth": []
@@ -826,16 +799,7 @@
 				"tags": ["contacts"],
 				"summary": "Atualização de contato",
 				"description": "Atualiza um contato.",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Id do contato",
-						"required": true,
-						"type": "string",
-						"format": "uuid"
-					}
-				],
+				"parameters": [{ "$ref": "#/components/parameters/contactIdParam" }],
 				"security": [
 					{
 						"bearerAuth": []
@@ -918,16 +882,7 @@
 				"tags": ["contacts"],
 				"summary": "Deleção de contato",
 				"description": "Deleta o contato do usuário com o id enviado na rota. O admin pode deletar um contato de qualquer usuário, já outro tipo de usuário só pode deletar seus próprios contatos.",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"description": "Id do contato",
-						"required": true,
-						"type": "string",
-						"format": "uuid"
-					}
-				],
+				"parameters": [{ "$ref": "#/components/parameters/contactIdParam" }],
 				"security": [
 					{
 						"bearerAuth": []
@@ -973,6 +928,26 @@
 	},
 	"components": {
 		"parameters": {
+			"userIdParam": {
+				"in": "path",
+				"name": "id",
+				"schema": {
+					"type": "string",
+					"format": "uuid",
+					"description": "Id do usuário",
+					"required": true
+				}
+			},
+			"contactIdParam": {
+				"in": "path",
+				"name": "id",
+				"schema": {
+					"type": "string",
+					"format": "uuid",
+					"description": "Id do contato",
+					"required": true
+				}
+			},
 			"offsetParam": {
 				"in": "query",
 				"name": "page",
